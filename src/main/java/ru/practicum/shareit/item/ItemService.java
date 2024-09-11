@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class ItemService {
     }
 
     public Item create(Item item, String userId) {
-        if (userId == null && isNotNumber(userId)) {
+        if (userId == null || isNotNumber(userId)) {
             throw new ValidationException("Необходимо указать id пользователя для " + item.getName());
         }
         item.setOwner(userService.getById(Integer.parseInt(userId)));
@@ -73,7 +74,7 @@ public class ItemService {
         User byId = userService.getById(Integer.parseInt(ownerId));
         log.info("Поиск предметов по id - {}", ownerId);
         return getAll().stream()
-                .filter(item -> item.getOwner().getId() == byId.getId())
+                .filter(item -> Objects.equals(item.getOwner().getId(), byId.getId()))
                 .toList();
     }
 
