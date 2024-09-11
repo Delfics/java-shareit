@@ -4,7 +4,7 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemDto;
 
 public class ItemDtoToItem {
-    public static Item toItem (ItemDto itemDto) {
+    public static Item toItem(ItemDto itemDto) {
         Item item = new Item();
         item.setId(itemDto.getId());
         item.setName(itemDto.getName());
