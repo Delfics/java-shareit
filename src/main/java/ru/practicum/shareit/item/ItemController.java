@@ -20,14 +20,14 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.XSHARERUSERID) Long userId) {
+    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.X_SHARER_USER_ID) Long userId) {
         log.info("ItemController Запрос Post - create. Входные параметры itemDto - {} , userId {} ", itemDto.toString(), userId);
         return ItemMapper.toItemDto(itemService.create(ItemMapper.toItem(itemDto), userId));
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto patch(@PathVariable Long itemId, @RequestBody ItemDto itemDto,
-                             @RequestHeader(HttpProperties.XSHARERUSERID) Long userId) {
+                             @RequestHeader(HttpProperties.X_SHARER_USER_ID) Long userId) {
         log.info("ItemController Запрос Patch - patch. Входные параметры itemId {},  itemDto - {} , userId {} ", itemId, itemDto.toString(), userId);
         return ItemMapper.toItemDto(itemService.patch(itemId, ItemMapper.toItem(itemDto), userId));
     }
@@ -39,7 +39,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader(HttpProperties.XSHARERUSERID) Long userId) {
+    public List<ItemDto> getItems(@RequestHeader(HttpProperties.X_SHARER_USER_ID) Long userId) {
         log.info("ItemController Запрос Get - getItems. Входные параметры userId {}", userId);
         Collection<Item> itemsOwner = itemService.getItemsOwner(userId);
         return itemsOwner.stream()
