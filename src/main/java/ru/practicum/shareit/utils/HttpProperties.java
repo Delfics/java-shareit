@@ -4,5 +4,5 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class HttpProperties {
-    public final String X_SHARER_USER_ID = "X-Sharer-User-Id";
+    public final String _X_SHARER_USER_ID = "X-Sharer-User-Id";
 }
