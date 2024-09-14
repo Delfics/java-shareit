@@ -8,13 +8,13 @@ import java.util.Collection;
 public interface UserService {
     Collection<User> getAll();
 
-    User getById(Integer id);
+    User getById(Long id);
 
     User create(User user);
 
-    User update(User user, Integer userId);
+    User update(User user, Long userId);
 
-    void delete(Integer id);
+    void delete(Long id);
 
-    User patch(User user, Integer userId);
+    User patch(User user, Long userId);
 }

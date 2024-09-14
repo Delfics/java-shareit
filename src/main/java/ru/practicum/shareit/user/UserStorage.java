@@ -8,11 +8,11 @@ import java.util.Collection;
 public interface UserStorage {
     Collection<User> getAll();
 
-    User getById(Integer id);
+    User getById(Long id);
 
     User create(User user);
 
-    User update(User newUser, Integer userId);
+    User update(User newUser, Long userId);
 
-    void delete(Integer id);
+    void delete(Long id);
 }

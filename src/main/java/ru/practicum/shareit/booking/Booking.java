@@ -6,12 +6,9 @@ import ru.practicum.shareit.user.User;
 
 import java.time.Instant;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
 public class Booking {
-    Integer id;
+    Long id;
     Instant startTime;
     Instant endTime;
     Item item;
