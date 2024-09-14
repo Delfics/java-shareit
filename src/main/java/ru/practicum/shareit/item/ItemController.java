@@ -1,53 +1,58 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.mappers.ItemDtoToItem;
-import ru.practicum.shareit.item.mappers.ItemToItemDto;
+import ru.practicum.shareit.item.mappers.ItemMapper;
+import ru.practicum.shareit.utils.HttpProperties;
 
 import java.util.Collection;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") String userId) {
-        return ItemToItemDto.toItemDto(itemService.create(ItemDtoToItem.toItem(itemDto), userId));
+    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.X_SHARER_USER_ID) Long userId) {
+        log.info("ItemController Запрос Post - create. Входные параметры itemDto - {} , userId {} ", itemDto.toString(), userId);
+        return ItemMapper.toItemDto(itemService.create(ItemMapper.toItem(itemDto), userId));
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto patchItem(@PathVariable Integer itemId, @RequestBody ItemDto itemDto,
-                             @RequestHeader("X-Sharer-User-Id") String userId) {
-        return ItemToItemDto.toItemDto(itemService.patch(itemId, ItemDtoToItem.toItem(itemDto), userId));
+    public ItemDto patch(@PathVariable Long itemId, @RequestBody ItemDto itemDto,
+                             @RequestHeader(HttpProperties.X_SHARER_USER_ID) Long userId) {
+        log.info("ItemController Запрос Patch - patch. Входные параметры itemId {},  itemDto - {} , userId {} ", itemId, itemDto.toString(), userId);
+        return ItemMapper.toItemDto(itemService.patch(itemId, ItemMapper.toItem(itemDto), userId));
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@PathVariable Integer itemId) {
-        return ItemToItemDto.toItemDto(itemService.getById(itemId));
+    public ItemDto getById(@PathVariable Long itemId) {
+        log.info("ItemController Запрос Get - getById. Входные параметры itemId {}", itemId);
+        return ItemMapper.toItemDto(itemService.getById(itemId));
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") String userId) {
+    public List<ItemDto> getItems(@RequestHeader(HttpProperties.X_SHARER_USER_ID) Long userId) {
+        log.info("ItemController Запрос Get - getItems. Входные параметры userId {}", userId);
         Collection<Item> itemsOwner = itemService.getItemsOwner(userId);
         return itemsOwner.stream()
-                .map(ItemToItemDto::toItemDto)
+                .map(ItemMapper::toItemDto)
                 .toList();
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestParam String text) {
+        log.info("ItemController Запрос Get - searchItems. Входные параметры text {}", text);
         Collection<Item> items = itemService.searchItems(text);
         return items.stream()
-                .map(ItemToItemDto::toItemDto)
+                .map(ItemMapper::toItemDto)
                 .toList();
     }
 }

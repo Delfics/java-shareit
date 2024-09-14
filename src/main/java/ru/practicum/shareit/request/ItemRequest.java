@@ -5,12 +5,9 @@ import ru.practicum.shareit.user.User;
 
 import java.time.Instant;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 public class ItemRequest {
-    Integer id;
+    Long id;
     String description;
     User requestor;
     Instant created;
