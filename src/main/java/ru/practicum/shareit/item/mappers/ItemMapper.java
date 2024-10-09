@@ -23,7 +23,7 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public ItemWithBookingsAndCommentsDto ToItemWithBookingsAndCommentsDto(ItemWithBookingsAndComments item) {
+    public ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto(ItemWithBookingsAndComments item) {
         ItemWithBookingsAndCommentsDto itemWithBookingsAndCommentsDto = new ItemWithBookingsAndCommentsDto();
         itemWithBookingsAndCommentsDto.setId(item.getItem().getId());
         itemWithBookingsAndCommentsDto.setName(item.getItem().getName());

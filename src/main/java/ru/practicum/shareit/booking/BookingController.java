@@ -25,6 +25,8 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto getBookingByBookingId(@PathVariable("bookingId") Long bookingId,
                                             @RequestHeader(HttpProperties.xSharerUserId) Long bookerId) {
+        log.info("ItemController Запрос Get - getBookingByBookingId. Входные параметры bookingId {}, bookerId - {}",
+                bookingId, bookerId);
         return BookingMapper.toBookingDto(bookingService.findBookingByBookingIdAndUserId(bookingId, bookerId));
 
     }
@@ -32,6 +34,7 @@ public class BookingController {
     @GetMapping()
     public List<BookingDto> getAllBookingsByBookerId(@RequestParam(required = false, defaultValue = "ALL") State state,
                                                      @RequestHeader(HttpProperties.xSharerUserId) Long bookerId) {
+        log.info("ItemController Запрос Get - getAllBookingsByBookerId. Входные параметры bookerId - {}", bookerId);
         List<Booking> allBookingsByBookerId = bookingService.findAllBookingsByBookerId(state, bookerId);
         return allBookingsByBookerId.stream()
                 .map(BookingMapper::toBookingDto)
@@ -42,6 +45,7 @@ public class BookingController {
     public List<BookingDto> findAllBookingsForAllItemsCurrentUser(
             @RequestParam(required = false, defaultValue = "ALL") State state,
             @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
+        log.info("ItemController Запрос Get - findAllBookingsForAllItemsCurrentUser. Входные параметры ownerId - {}", ownerId);
         List<Booking> allBookingsWithAllItemsByOwnerId = bookingService.findAllBookingsWithAllItemsByOwnerId(state, ownerId);
         return allBookingsWithAllItemsByOwnerId.stream()
                 .map(BookingMapper::toBookingDto)
@@ -61,7 +65,9 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public BookingDto patch(@PathVariable Long bookingId, @RequestParam Boolean approved,
-                            @RequestHeader(HttpProperties.xSharerUserId) Long ownerItemId) {
-        return BookingMapper.toBookingDto(bookingService.patch(bookingId, approved, ownerItemId));
+                            @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
+        log.info("BookingController Запрос Patch - create. Входные параметры bookingId - {} , userId {} ",
+                bookingId, ownerId);
+        return BookingMapper.toBookingDto(bookingService.patch(bookingId, approved, ownerId));
     }
 }

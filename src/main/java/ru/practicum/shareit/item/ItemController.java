@@ -29,7 +29,7 @@ public class ItemController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
-        log.info("ItemController Запрос Post - create. Входные параметры itemDto - {} , userId {} ", itemDto.toString(), userId);
+        log.info("ItemController Запрос Post - createItem. Входные параметры itemDto - {} , userId {} ", itemDto.toString(), userId);
         return ItemMapper.toItemDto(itemService.createItem(ItemMapper.toItem(itemDto), userId));
     }
 
@@ -37,6 +37,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDtoRequired createComment(@RequestBody CommentDto commentDto, @PathVariable("itemId") Long itemId,
                                             @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
+        log.info("ItemController Запрос Post - createComment. Входные параметры itemDto - {} , userId {} ", commentDto.toString(), userId);
         CommentDto commentDto1 = itemService.addAuthorToCommentDto(commentDto, userId);
         commentDto1 = itemService.addItemToCommentDto(commentDto1, itemId);
         return CommentMapper.toDto(itemService.createComment(CommentMapper.toComment(commentDto1), userId, itemId));
@@ -52,7 +53,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ItemWithBookingsAndCommentsDto getByIdItemWithComments(@PathVariable Long itemId, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("ItemController Запрос Get - getById. Входные параметры itemId {}", itemId);
-        return ItemMapper.ToItemWithBookingsAndCommentsDto(itemService.findItemWithComments(itemId));
+        return ItemMapper.toItemWithBookingsAndCommentsDto(itemService.findItemWithComments(itemId));
     }
 
     @GetMapping
@@ -60,7 +61,7 @@ public class ItemController {
         log.info("ItemController Запрос Get - getItems. Входные параметры userId {}", userId);
         List<ItemWithBookingsAndComments> itemsWithBookingsAndComments = itemService.findItemsWithCommentsBookingByUserId(userId);
         return itemsWithBookingsAndComments.stream()
-                .map(ItemMapper::ToItemWithBookingsAndCommentsDto)
+                .map(ItemMapper::toItemWithBookingsAndCommentsDto)
                 .toList();
     }
 

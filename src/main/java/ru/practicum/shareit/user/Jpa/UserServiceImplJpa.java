@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.Jpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -69,7 +68,7 @@ public class UserServiceImplJpa implements UserService {
             if (!byId.get().getName().equals(user.getName()) && user.getName() != null) {
                 byId.get().setName(user.getName());
             }
-            if(!byId.get().getEmail().equals(user.getEmail()) && user.getEmail() != null) {
+            if (!byId.get().getEmail().equals(user.getEmail()) && user.getEmail() != null) {
                 byId.get().setEmail(user.getEmail());
             }
             userStorageJpa.save(byId.get());

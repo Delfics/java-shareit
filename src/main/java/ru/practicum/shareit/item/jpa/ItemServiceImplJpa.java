@@ -134,8 +134,8 @@ public class ItemServiceImplJpa implements ItemService {
         return new ItemWithBookingsAndComments(byId, null, null, listComments);
     }
 
-    public List<Item> findItemsByOwnerId(Long Id) {
-        return itemStorageJpa.findItemsByOwnerId(Id);
+    public List<Item> findItemsByOwnerId(Long id) {
+        return itemStorageJpa.findItemsByOwnerId(id);
     }
 
 

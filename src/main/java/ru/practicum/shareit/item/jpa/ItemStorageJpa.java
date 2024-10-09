@@ -13,7 +13,7 @@ public interface ItemStorageJpa extends JpaRepository<Item, Long> {
     @Query("SELECT it " +
             "FROM Item as it " +
             "WHERE it.owner.id = ?1")
-    List<Item> findItemsByOwnerId(Long Id);
+    List<Item> findItemsByOwnerId(Long id);
 
     @Query("SELECT book.item as book_item," +
             "MIN(CASE WHEN book.start > ?1 THEN book.start END) as next_booking_time," +
