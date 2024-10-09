@@ -41,7 +41,7 @@ public class ItemStorageInMemory implements ItemStorage {
         items.remove(id);
     }
 
-    public Collection<Item> getItemsOwner(Long ownerId) {
+    public List<Item> getItemsOwner(Long ownerId) {
         List<Item> itemsOwner = getAll().stream()
                 .filter(item -> Objects.equals(item.getOwner().getId(), ownerId))
                 .toList();

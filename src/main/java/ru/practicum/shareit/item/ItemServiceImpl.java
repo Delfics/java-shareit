@@ -2,16 +2,17 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
@@ -31,14 +32,10 @@ public class ItemServiceImpl implements ItemService {
         return byId;
     }
 
-    public Item create(Item item, Long userId) {
-        if (userId == null) {
-            throw new ValidationException("Необходимо указать id пользователя для " + item.getName());
-        }
+    public Item createItem(Item item, Long userId) {
+        Valid.throwExIfUserIdNull(userId, item);
         item.setOwner(userService.getById(userId));
-        if (item.getName().isEmpty() || item.getDescription().isEmpty() || item.getAvailable() == null) {
-            throw new ValidationException("Необходимо указать Name или Description или Available для item " + item.getId());
-        }
+        Valid.throwExIfNameOrDescriptionAreEmptyAndAvailableIsNull(item);
         item.setAvailable(item.getAvailable());
         Item itemCreated = itemStorage.create(item);
         log.debug("Создан успешно item {}", itemCreated.name);
@@ -51,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
         return update;
     }
 
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         Item byId = getById(id);
         itemStorage.delete(byId.getId());
         log.debug("Удалён успешно item {}", byId.getId());
@@ -72,13 +69,13 @@ public class ItemServiceImpl implements ItemService {
         return update;
     }
 
-    public Collection<Item> getItemsOwner(Long ownerId) {
+    public List<Item> findItemsByOwnerId(Long ownerId) {
         User byId = userService.getById(ownerId);
         log.debug("Поиск предметов по id - {}", byId.getId());
         return itemStorage.getItemsOwner(byId.getId());
     }
 
-    public Collection<Item> searchItems(String text) {
+    public Collection<Item> findItemsByText(String text) {
         log.debug("Поиск предметов по названию - {}", text);
         return itemStorage.searchItems(text);
     }

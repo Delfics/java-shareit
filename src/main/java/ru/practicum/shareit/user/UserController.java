@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.mappers.UserMapper;
 
@@ -12,6 +13,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
+    @Qualifier("userServiceImplJpa")
     private final UserService userService;
 
     @Autowired
@@ -60,6 +62,6 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void deleteById(@PathVariable Long userId) {
         log.info("UserController Запрос Delete - deleteById. Входные параметры userId {}", userId);
-        userService.delete(userId);
+        userService.deleteById(userId);
     }
 }

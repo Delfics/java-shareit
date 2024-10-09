@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface ItemStorage {
@@ -19,5 +20,5 @@ public interface ItemStorage {
 
     Collection<Item> searchItems(String text);
 
-    Collection<Item> getItemsOwner(Long ownerId);
+    List<Item> getItemsOwner(Long ownerId);
 }

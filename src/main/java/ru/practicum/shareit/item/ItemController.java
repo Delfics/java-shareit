@@ -1,58 +1,77 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.Jpa.ItemServiceImplJpa;
+import ru.practicum.shareit.item.comment.CommentDto;
+import ru.practicum.shareit.item.comment.CommentDtoRequired;
+import ru.practicum.shareit.item.comment.mappers.CommentMapper;
 import ru.practicum.shareit.item.mappers.ItemMapper;
+import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.utils.HttpProperties;
 
 import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemServiceImpl itemService;
+    private final ItemServiceImplJpa itemService;
+
+    @Autowired
+    public ItemController(ItemServiceImplJpa itemService, UserService userService) {
+        this.itemService = itemService;
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
+    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("ItemController Запрос Post - create. Входные параметры itemDto - {} , userId {} ", itemDto.toString(), userId);
-        return ItemMapper.toItemDto(itemService.create(ItemMapper.toItem(itemDto), userId));
+        return ItemMapper.toItemDto(itemService.createItem(ItemMapper.toItem(itemDto), userId));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDtoRequired createComment(@RequestBody CommentDto commentDto, @PathVariable("itemId") Long itemId,
+                                     @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
+        CommentDto commentDto1 = itemService.addAuthorToCommentDto(commentDto, userId);
+        commentDto1 = itemService.addItemToCommentDto(commentDto1, itemId);
+       return CommentMapper.toDtoRequired(itemService.createComment(CommentMapper.toComment(commentDto1), userId, itemId));
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto patch(@PathVariable Long itemId, @RequestBody ItemDto itemDto,
+    public ItemDto patchItem(@PathVariable Long itemId, @RequestBody ItemDto itemDto,
                              @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("ItemController Запрос Patch - patch. Входные параметры itemId {},  itemDto - {} , userId {} ", itemId, itemDto.toString(), userId);
         return ItemMapper.toItemDto(itemService.patch(itemId, ItemMapper.toItem(itemDto), userId));
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable Long itemId) {
+    public ItemWithBookingsAndCommentsDto getByIdItemWithComments(@PathVariable Long itemId, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("ItemController Запрос Get - getById. Входные параметры itemId {}", itemId);
-        return ItemMapper.toItemDto(itemService.getById(itemId));
+        return ItemMapper.ToItemWithBookingsAndCommentsDto(itemService.findItemWithComments(itemId));
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader(HttpProperties.xSharerUserId) Long userId) {
+    public List<ItemWithBookingsAndCommentsDto> getItems(@RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("ItemController Запрос Get - getItems. Входные параметры userId {}", userId);
-        Collection<Item> itemsOwner = itemService.getItemsOwner(userId);
-        return itemsOwner.stream()
-                .map(ItemMapper::toItemDto)
+        List<ItemWithBookingsAndComments> itemsWithBookingsAndComments = itemService.findItemsWithCommentsBookingByUserId(userId);
+        return itemsWithBookingsAndComments.stream()
+                .map(ItemMapper::ToItemWithBookingsAndCommentsDto)
                 .toList();
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestParam String text) {
         log.info("ItemController Запрос Get - searchItems. Входные параметры text {}", text);
-        Collection<Item> items = itemService.searchItems(text);
+        Collection<Item> items = itemService.findItemsByText(text);
         return items.stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
+
 }
