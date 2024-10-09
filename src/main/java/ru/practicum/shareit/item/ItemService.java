@@ -16,6 +16,6 @@ public interface ItemService {
 
     Item patch(Long itemId, Item item, Long userId);
 
-    List<Item> findItemsByOwnerId(Long Id);
+    List<Item> findItemsByOwnerId(Long id);
 
 }

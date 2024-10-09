@@ -111,11 +111,11 @@ public class BookingServiceImpl {
         }
     }
 
-    public Booking patch(Long bookingId, Boolean approved, Long ownerItemId) {
+    public Booking patch(Long bookingId, Boolean approved, Long ownerId) {
         Optional<Booking> booking = bookingStorage.findById(bookingId);
         Long bookingItemOwnerId = booking.get().getItem().getOwner().getId();
         if (booking.get().getStatus() == Status.WAITING && approved) {
-            if (bookingItemOwnerId.equals(ownerItemId)) {
+            if (bookingItemOwnerId.equals(ownerId)) {
                 booking.get().setStatus(Status.APPROVED);
                 bookingStorage.save(booking.get());
                 log.debug("Успшено изменено описание booking {}", booking.get().id);
