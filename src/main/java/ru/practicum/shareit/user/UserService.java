@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 
 @Service
-public interface UserService {
+public interface UserService  {
     Collection<User> getAll();
 
     User getById(Long id);
@@ -14,7 +14,7 @@ public interface UserService {
 
     User update(User user, Long userId);
 
-    void delete(Long id);
+    void deleteById(Long id);
 
     User patch(User user, Long userId);
 }

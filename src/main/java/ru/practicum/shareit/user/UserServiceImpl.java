@@ -2,7 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -11,7 +11,7 @@ import java.util.Collection;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Service
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
 
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         return update;
     }
 
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         User byId = getById(id);
         userStorage.delete(byId.getId());
         log.debug("Пользователь {} удалён", byId.getId());
