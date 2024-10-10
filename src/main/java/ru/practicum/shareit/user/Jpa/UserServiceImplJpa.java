@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.User;
@@ -31,6 +32,9 @@ public class UserServiceImplJpa implements UserService {
         if (user.getEmail() == null || user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             throw new ValidationException("Email указан неправильно");
         }
+        if (existsByEmail(user.getEmail())) {
+            throw new ConflictException("Такой email уже существует");
+        }
         userStorageJpa.save(user);
         Optional<User> byId = userStorageJpa.findById(user.getId());
         log.debug("Создали user - {} ", byId.get().getEmail());
@@ -53,6 +57,9 @@ public class UserServiceImplJpa implements UserService {
             }
             User byId = getById(userId);
             user.setName(byId.getName());
+        }
+        if (existsByEmail(user.getEmail())) {
+            throw new ConflictException("Такой email уже существует");
         }
         if (getById(userId).getEmail() == null && user.getEmail() == null) {
             throw new ValidationException("Поля email при изменении не должно быть пустым");
@@ -85,6 +92,10 @@ public class UserServiceImplJpa implements UserService {
         } else {
             throw new NotFoundException("Пользователь с таким id не найден " + userId);
         }
+    }
+
+    public Boolean existsByEmail(String email) {
+        return userStorageJpa.existsByEmail(email);
     }
 
 }
