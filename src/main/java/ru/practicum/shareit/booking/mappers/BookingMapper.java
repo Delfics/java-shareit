@@ -1,11 +1,12 @@
 package ru.practicum.shareit.booking.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingDto;
-import ru.practicum.shareit.item.ItemDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mappers.ItemMapper;
-import ru.practicum.shareit.user.UserDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mappers.UserMapper;
 
 @UtilityClass
@@ -15,9 +16,17 @@ public class BookingMapper {
         booking.setId(bookingDto.getId());
         booking.setStart(bookingDto.getStart());
         booking.setEnd(bookingDto.getEnd());
-        booking.setItem(ItemMapper.toItem(bookingDto.getItem()));
-        booking.setBooker(UserMapper.toUser(bookingDto.getBooker()));
-        booking.setStatus(bookingDto.getStatus());
+        if (bookingDto.getItem() != null) {
+            booking.setItem(ItemMapper.toItem(bookingDto.getItem()));
+        } else if (bookingDto.getItemId() != null) {
+            Item item = new Item();
+            item.setId(bookingDto.getItemId());
+            booking.setItem(item);
+        } else if (bookingDto.getBooker() != null) {
+            booking.setBooker(UserMapper.toUser(bookingDto.getBooker()));
+        } else if (bookingDto.getStatus() != null) {
+            booking.setStatus(bookingDto.getStatus());
+        }
         return booking;
     }
 

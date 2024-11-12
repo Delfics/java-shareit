@@ -1,7 +1,11 @@
 package ru.practicum.shareit.item.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.item.*;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemWithBookingsAndComments;
+import ru.practicum.shareit.itemrequest.model.ItemRequest;
 
 @UtilityClass
 public class ItemMapper {
@@ -11,6 +15,12 @@ public class ItemMapper {
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
+        if (itemDto.getRequestId() != null) {
+            /*ItemRequest itemRequest = new ItemRequest();
+            itemRequest.setId(itemDto.getRequestId());*/
+            /*item.setItemRequest(itemRequest);*/
+            item.setRequestId(itemDto.getRequestId());
+        }
         return item;
     }
 
@@ -20,6 +30,12 @@ public class ItemMapper {
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
+        /*if (item.getItemRequest() != null && item.getItemRequest().getId() != null ) {
+            itemDto.setRequestId(item.getItemRequest().getId());
+        }*/
+        if (item.getRequestId() != null) {
+            itemDto.setRequestId(item.getRequestId());
+        }
         return itemDto;
     }
 
