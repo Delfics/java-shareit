@@ -1,9 +1,10 @@
 package ru.practicum.server.itemrequest.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.api.ItemDto;
-import ru.practicum.api.ItemRequestDto;
-import ru.practicum.api.ItemRequestWithItemsDto;
+
+import ru.practicum.api.dto.ItemDto;
+import ru.practicum.api.dto.ItemRequestDto;
+import ru.practicum.api.dto.ItemRequestWithItemsDto;
 import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.itemrequest.model.ItemRequest;
 import ru.practicum.server.itemrequest.model.ItemRequestWithItems;

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.api.ItemRequestDto;
+import ru.practicum.api.dto.ItemRequestDto;
 import ru.practicum.gateway.utils.HttpProperties;
 
 
@@ -29,7 +29,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> findItemRequestByIdWithItemsForEach(@RequestHeader(HttpProperties.xSharerUserId) Long userId,
-                                                                       @PathVariable("requestId") Long requestId) {
+                                                                      @PathVariable("requestId") Long requestId) {
         log.info("Get - findItemRequestByIdWithItemsForEach. Входные параметры requestId={}", requestId);
         return itemRequestClient.findItemRequestByIdWithItemsForEach(userId, requestId);
     }
@@ -43,7 +43,7 @@ public class ItemRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createItemRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
-                                            @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
+                                                    @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("Post - createItemRequest. Входные параметры itemRequestDto={} , userId={} ", itemRequestDto, userId);
         return itemRequestClient.createItemRequest(itemRequestDto, userId);
     }

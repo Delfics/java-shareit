@@ -18,4 +18,6 @@ public interface UserService  {
     void deleteById(Long id);
 
     User patch(User user, Long userId);
+
+    Boolean existsByEmail(String email);
 }

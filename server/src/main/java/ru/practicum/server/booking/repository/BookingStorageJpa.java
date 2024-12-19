@@ -2,8 +2,8 @@ package ru.practicum.server.booking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
-import ru.practicum.api.Status;
 import ru.practicum.server.item.model.Item;
 
 import java.time.LocalDateTime;
@@ -38,7 +38,12 @@ public interface BookingStorageJpa extends JpaRepository<Booking, Long> {
             "FROM Booking as book " +
             "WHERE book.booker.id = ?1 " +
             "ORDER BY book.start DESC ")
-    List<Booking> findAllBookingByBookerId(Long bookerId);
+    List<Booking> findAllBookingsByBookerId(Long bookerId);
+
+    @Query("SELECT book " +
+            "FROM Booking book " +
+            "WHERE book.item.owner.id = ?1")
+    List<Booking> findAllBookingsByOwnerId(Long ownerId);
 
     @Query("SELECT book " +
             "FROM Booking as book " +

@@ -66,6 +66,11 @@ public class UserServiceImpl implements UserService {
         return update;
     }
 
+    @Override
+    public Boolean existsByEmail(String email) {
+        throw new RuntimeException("Not supported yet.");
+    }
+
     public User update(User user, Long userId) {
         User update = userStorage.update(user, user.getId());
         log.debug("Пользователь {} обновлён", update.getId());

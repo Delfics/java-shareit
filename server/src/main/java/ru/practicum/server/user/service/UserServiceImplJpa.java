@@ -52,7 +52,7 @@ public class UserServiceImplJpa implements UserService {
 
     public User patch(User user, Long userId) {
         if (user.getName() == null) {
-            if (getById(userId) == null) {
+            if (getById(userId).getName() == null) {
                 throw new ValidationException("Поля name не должно быть пустым");
             }
             User byId = getById(userId);

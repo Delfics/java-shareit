@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.api.BookingDto;
-import ru.practicum.api.State;
-import ru.practicum.server.mappers.BookingMapper;
+import ru.practicum.api.dto.BookingDto;
+import ru.practicum.api.dto.State;
+import ru.practicum.server.booking.mappers.BookingMapper;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.service.BookingServiceImpl;
 import ru.practicum.server.utils.HttpProperties;
@@ -49,7 +49,7 @@ public class BookingController {
             @RequestParam(required = false, defaultValue = "ALL") State state,
             @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
         log.info("Запрос Get - findAllBookingsForAllItemsCurrentUser. Входные параметры ownerId - {}", ownerId);
-        List<Booking> allBookingsWithAllItemsByOwnerId = bookingService.findAllBookingsWithAllItemsByOwnerId(state, ownerId);
+        List<Booking> allBookingsWithAllItemsByOwnerId = bookingService.findAllBookingsForAllItemsByOwnerId(state, ownerId);
         return allBookingsWithAllItemsByOwnerId.stream()
                 .map(BookingMapper::toBookingDto)
                 .toList();

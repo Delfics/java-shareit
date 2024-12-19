@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
-import ru.practicum.api.Status;
+import ru.practicum.api.dto.Status;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.user.model.User;
 

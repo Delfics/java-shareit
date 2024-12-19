@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.api.CommentDto;
-import ru.practicum.api.ItemDto;
+import ru.practicum.api.dto.CommentDto;
+import ru.practicum.api.dto.ItemDto;
 import ru.practicum.gateway.client.BaseClient;
 import ru.practicum.gateway.utils.Utility;
 
@@ -17,6 +17,7 @@ import java.util.Map;
 @Service
 public class ItemClient extends BaseClient {
     private static final String API_PREFIX = "/items";
+
     @Autowired
     public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
@@ -35,8 +36,8 @@ public class ItemClient extends BaseClient {
         return post(Utility.SLASH + itemId + "/comment", userId, commentDto);
     }
 
-    public ResponseEntity<Object> getAll() {
-        return get(Utility.EMPTY);
+    public ResponseEntity<Object> getAll(Long userId) {
+        return get(Utility.EMPTY, userId);
     }
 
     public ResponseEntity<Object> getById(Long userId) {

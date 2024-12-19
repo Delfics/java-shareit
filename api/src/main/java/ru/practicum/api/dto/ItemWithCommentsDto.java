@@ -1,4 +1,4 @@
-package ru.practicum.api;
+package ru.practicum.api.dto;
 
 import lombok.Data;
 

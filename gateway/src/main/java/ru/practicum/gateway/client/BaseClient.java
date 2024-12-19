@@ -92,6 +92,10 @@ public class BaseClient {
         return makeAndSendRequest(HttpMethod.GET, path, userId, null, null);
     }
 
+    protected ResponseEntity<Object> existsEmail(String path, Map<String, Object> parameters) {
+        return makeAndSendRequest(HttpMethod.GET, path, null, parameters, null);
+    }
+
     private String buildUrlWithParams(String path, Map<String, Object> parameters) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path);
         if (parameters != null) {

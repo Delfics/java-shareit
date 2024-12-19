@@ -8,9 +8,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import ru.practicum.api.State;
+import ru.practicum.api.dto.BookingDto;
+import ru.practicum.api.dto.State;
 import ru.practicum.gateway.client.BaseClient;
-import ru.practicum.api.BookingDto;
 import ru.practicum.gateway.utils.Utility;
 
 import java.util.Map;
@@ -28,16 +28,6 @@ public class BookingClient extends BaseClient {
                         .build()
         );
     }
-
-    /*public ResponseEntity<Object> getBookings(long userId, State state, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "state", state.name(),
-                "from", from,
-                "size", size
-        );
-        return get("?state={state}&from={from}&size={size}", userId, parameters);
-    }*/
-
 
     public ResponseEntity<Object> createBooking(Long userId, BookingDto requestDto) {
         return post(Utility.EMPTY, userId, requestDto);

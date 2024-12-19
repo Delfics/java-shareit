@@ -1,8 +1,8 @@
 package ru.practicum.server.item.comment.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.api.CommentDto;
-import ru.practicum.api.CommentDtoRequired;
+import ru.practicum.api.dto.CommentDto;
+import ru.practicum.api.dto.CommentDtoRequired;
 import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.item.model.Comment;
 import ru.practicum.server.user.mappers.UserMapper;

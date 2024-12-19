@@ -1,8 +1,8 @@
 package ru.practicum.server.item.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.api.ItemDto;
-import ru.practicum.api.ItemWithBookingsAndCommentsDto;
+import ru.practicum.api.dto.ItemDto;
+import ru.practicum.api.dto.ItemWithBookingsAndCommentsDto;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.model.ItemWithBookingsAndComments;
 

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.api.ItemRequestDto;
+import ru.practicum.api.dto.ItemRequestDto;
 import ru.practicum.gateway.client.BaseClient;
 import ru.practicum.gateway.utils.Utility;
 
@@ -26,7 +26,7 @@ public class ItemRequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> findAllItemRequestsWithItemsForEach(Long userId) {
-      return findAllItemRequestsWithItems(Utility.EMPTY, userId);
+        return findAllItemRequestsWithItems(Utility.EMPTY, userId);
     }
 
     public ResponseEntity<Object> findItemRequestByIdWithItemsForEach(Long userId, Long requestId) {

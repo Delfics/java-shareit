@@ -1,5 +1,6 @@
-package ru.practicum.api;
+package ru.practicum.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,9 @@ public class ItemWithBookingsAndCommentsDto {
     String name;
     String description;
     Boolean available;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime nextBooking;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime lastBooking;
     List<String> comments;
 }

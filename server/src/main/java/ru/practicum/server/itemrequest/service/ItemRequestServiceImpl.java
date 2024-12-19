@@ -24,7 +24,7 @@ public class ItemRequestServiceImpl {
 
     @Autowired
     public ItemRequestServiceImpl(ItemRequestStorageJpa itemRequestStorage, UserService userService,
-                                  ItemServiceImplJpa itemService ) {
+                                  ItemServiceImplJpa itemService) {
         this.itemRequestStorage = itemRequestStorage;
         this.userService = userService;
         this.itemService = itemService;
@@ -44,7 +44,7 @@ public class ItemRequestServiceImpl {
     }
 
 
-    public List<ItemRequestWithItems> findAllItemRequestsWithItemsForEach(Long userId) {
+    public List<ItemRequestWithItems> findAllItemRequestsWithAllItemsForUser(Long userId) {
         List<ItemRequest> allItemRequestsByUserId = itemRequestStorage.findAllItemRequestsByUserId(userId);
         List<Item> itemsByItemRequestRequestorId = itemService.findItemsByItemRequestRequestorId(userId);
 
@@ -66,19 +66,18 @@ public class ItemRequestServiceImpl {
     }
 
 
-
-
-    public ItemRequestWithItems findItemRequestByIdWithItemsForEach(Long requestId) {
+    public ItemRequestWithItems findItemRequestByIdWithAllItems(Long requestId) {
         Object[] itemRequestByIdWithItemsForEach = itemRequestStorage.findItemRequestByIdWithItemsForEach(requestId);
         ItemRequest itemRequest = new ItemRequest();
         List<Item> items = new ArrayList<>();
         if (itemRequestByIdWithItemsForEach != null) {
-            Object[] newItemRequestByIdWithItemsForEach = (Object[]) itemRequestByIdWithItemsForEach[0];
-            for (Object obj : newItemRequestByIdWithItemsForEach) {
-                if (obj instanceof ItemRequest) {
-                    itemRequest = (ItemRequest) obj;
-                } else if (obj instanceof Item) {
-                    items.add((Item) obj);
+            for (Object obj : itemRequestByIdWithItemsForEach) {
+                Object[] arrayOfObj = (Object[]) obj;
+                if (arrayOfObj[0] instanceof ItemRequest) {
+                    itemRequest = (ItemRequest) arrayOfObj[0];
+                    if (arrayOfObj[1] instanceof Item item) {
+                        items.add(item);
+                    }
                 }
             }
         }

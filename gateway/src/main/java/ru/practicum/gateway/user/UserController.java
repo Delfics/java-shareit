@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.api.UserDto;
+import ru.practicum.api.dto.UserDto;
 
 @Slf4j
 @RequestMapping(path = "/users")
@@ -15,7 +15,6 @@ import ru.practicum.api.UserDto;
 @RequiredArgsConstructor
 public class UserController {
     private final UserClient userClient;
-
 
     @GetMapping()
     public ResponseEntity<Object> getAll() {
@@ -37,8 +36,8 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Object> update(@PathVariable Long userId, @RequestBody UserDto userDto) {
-        log.info("Updating user id={}, user={}",userId, userDto);
+    public ResponseEntity<Object> update(@PathVariable Long userId, @RequestBody @Valid UserDto userDto) {
+        log.info("Updating user id={}, user={}", userId, userDto);
         return userClient.update(userId, userDto);
     }
 

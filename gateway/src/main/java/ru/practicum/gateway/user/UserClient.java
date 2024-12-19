@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.api.UserDto;
+import ru.practicum.api.dto.UserDto;
 import ru.practicum.gateway.client.BaseClient;
 import ru.practicum.gateway.utils.Utility;
+
+import java.util.Map;
 
 @Service
 public class UserClient extends BaseClient {
@@ -47,5 +49,10 @@ public class UserClient extends BaseClient {
 
     public ResponseEntity<Object> delete(Long userId) {
         return delete(Utility.SLASH + userId, userId);
+    }
+
+    public ResponseEntity<Object> existsEmail(String email) {
+        Map<String, Object> param = Map.of("email", email);
+        return existsEmail("/exists-email?email={email}", param);
     }
 }

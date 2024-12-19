@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import ru.practicum.api.State;
+import ru.practicum.api.dto.BookingDto;
+import ru.practicum.api.dto.State;
+import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
-import ru.practicum.api.Status;
 import ru.practicum.server.booking.repository.BookingStorageJpa;
-import ru.practicum.api.BookingDto;
 import ru.practicum.server.exception.BadRequestException;
 import ru.practicum.server.exception.ForbiddenException;
 import ru.practicum.server.exception.NotFoundException;
@@ -20,8 +20,10 @@ import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,6 +38,9 @@ public class BookingServiceImpl {
     }
 
     public Booking create(Booking booking, Long userId) {
+        if (booking.getStart() == null || booking.getEnd() == null) {
+            throw new BadRequestException("Booking start и end должны быть указаны");
+        }
         if (booking.getItem() == null) {
             throw new NotFoundException("Booking item не найден");
         }
@@ -70,49 +75,19 @@ public class BookingServiceImpl {
         return booking;
     }
 
-
     public List<Booking> findAllBookingsByBookerId(State state, Long bookerId) {
-        Booking bookingByBookerId = bookingStorage.findBookingByBookerId(bookerId);
-        LocalDateTime timeNow = LocalDateTime.now();
+        List<Booking> allBookingsByBookerId = bookingStorage.findAllBookingsByBookerId(bookerId);
         log.debug("Поиск брони по bookerId - {}", bookerId);
-
-        if (state.equals(State.CURRENT) && (bookingByBookerId.getStart().equals(timeNow) || bookingByBookerId.getStart().isBefore(timeNow)) &&
-                bookingByBookerId.getEnd().isAfter(timeNow)) {
-            return bookingStorage.findAllBookingsByCurrentTimeAndBookerId(timeNow, bookerId);
-        } else if (state.equals(State.PAST) && bookingByBookerId.getEnd().isBefore(timeNow)) {
-            return bookingStorage.findAllBookingsByPastTimeAndBookerId(timeNow, bookerId);
-        } else if (state.equals(State.FUTURE) && bookingByBookerId.getStart().isAfter(timeNow)) {
-            return bookingStorage.findAllBookingsByFutureTimeAndBookerId(timeNow, bookerId);
-        } else if (state.equals(State.WAITING)) {
-            return bookingStorage.findAllBookingsByStatusAndByBookerId(Status.WAITING, bookerId);
-        } else if (state.equals(State.REJECTED)) {
-            return bookingStorage.findAllBookingsByStatusAndByBookerId(Status.REJECTED, bookerId);
-        } else {
-            return bookingStorage.findAllBookingByBookerId(bookerId);
-        }
+        return filterBookings(state, allBookingsByBookerId);
     }
 
-    public List<Booking> findAllBookingsWithAllItemsByOwnerId(State state, Long ownerId) {
+    public List<Booking> findAllBookingsForAllItemsByOwnerId(State state, Long ownerId) {
         int zero = 0;
-        LocalDateTime timeNow = LocalDateTime.now();
-        Booking bookingByBookerId = bookingStorage.findBookingByBookerId(ownerId);
-        log.debug("Поиск брони со всеми items по ownerId - {}", ownerId);
+        List<Booking> allBookingsByBookerId = bookingStorage.findAllBookingsByOwnerId(ownerId);
+        log.debug("Поиск брони по ownerId - {}", ownerId);
 
         if (itemService.findItemsByOwnerId(ownerId).size() > zero) {
-            if (state.equals(State.CURRENT) && (bookingByBookerId.getStart().equals(timeNow) || bookingByBookerId.getStart().isBefore(timeNow)) &&
-                    bookingByBookerId.getEnd().isAfter(timeNow)) {
-                return bookingStorage.findAllBookingsWithAllItemsByCurrentTimeAndOwnerId(timeNow, ownerId);
-            } else if (state.equals(State.PAST) && bookingByBookerId.getEnd().isBefore(timeNow)) {
-                return bookingStorage.findAllBookingsWithAllItemsByPastTimeAndOwnerId(timeNow, ownerId);
-            } else if (state.equals(State.FUTURE) && bookingByBookerId.getStart().isAfter(timeNow)) {
-                return bookingStorage.findAllBookingsWithAllItemsByFutureTimeAndOwnerId(timeNow, ownerId);
-            } else if (state.equals(State.WAITING)) {
-                return bookingStorage.findAllBookingsWithAllItemsByStatusAndOwnerId(Status.WAITING, ownerId);
-            } else if (state.equals(State.REJECTED)) {
-                return bookingStorage.findAllBookingsWithAllItemsByStatusAndOwnerId(Status.REJECTED, ownerId);
-            } else {
-                return bookingStorage.findAllBookingsWithAllItemsForOwnerId(ownerId);
-            }
+            return filterBookings(state, allBookingsByBookerId);
         } else {
             throw new NotFoundException("У пользователя " + ownerId + " нет вещей");
         }
@@ -121,18 +96,41 @@ public class BookingServiceImpl {
     public Booking patch(Long bookingId, Boolean approved, Long ownerId) {
         Optional<Booking> booking = bookingStorage.findById(bookingId);
         Long bookingItemOwnerId = booking.get().getItem().getOwner().getId();
-        if (booking.get().getStatus() == Status.WAITING && approved) {
-            if (bookingItemOwnerId.equals(ownerId)) {
-                booking.get().setStatus(Status.APPROVED);
-                bookingStorage.save(booking.get());
-                log.debug("Успшено изменено описание booking {}", booking.get().getId());
-            } else {
-                booking.get().setStatus(Status.REJECTED);
-                bookingStorage.save(booking.get());
-                throw new ForbiddenException("Отказано В доступе");
-            }
+        if (booking.get().getStatus() == Status.WAITING && approved && bookingItemOwnerId.equals(ownerId)) {
+            booking.get().setStatus(Status.APPROVED);
+            bookingStorage.save(booking.get());
+            log.debug("Успшено изменено описание booking {}", booking.get().getId());
+        } else {
+            booking.get().setStatus(Status.REJECTED);
+            bookingStorage.save(booking.get());
+            throw new ForbiddenException("Отказано В доступе");
         }
         return bookingStorage.findById(bookingId).get();
+    }
+
+    private List<Booking> filterBookings(State state, List<Booking> allBookings) {
+        LocalDateTime timeNow = LocalDateTime.now();
+        List<Booking> filteredBookings = allBookings.stream()
+                .filter(booking -> {
+                    switch (state) {
+                        case CURRENT:
+                            return booking.getStart().isBefore(timeNow) && booking.getEnd().isAfter(timeNow);
+                        case PAST:
+                            return booking.getEnd().isBefore(timeNow);
+                        case FUTURE:
+                            return booking.getStart().isAfter(timeNow);
+                        case WAITING:
+                            return booking.getStatus() == Status.WAITING;
+                        case REJECTED:
+                            return booking.getStatus() == Status.REJECTED;
+                        case ALL:
+                        default:
+                            return true;
+                    }
+                })
+                .sorted(Comparator.comparing(Booking::getStart).reversed())
+                .collect(Collectors.toList());
+        return filteredBookings;
     }
 
     public BookingDto addItemIntoBookingDto(BookingDto bookingDto) {

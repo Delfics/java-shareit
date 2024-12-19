@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.api.dto.CommentDto;
+import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
-import ru.practicum.api.Status;
 import ru.practicum.server.booking.service.BookingServiceImpl;
-import ru.practicum.api.CommentDto;
 import ru.practicum.server.exception.BadRequestException;
 import ru.practicum.server.exception.NotFoundException;
 import ru.practicum.server.item.mappers.ItemMapper;
@@ -166,27 +166,15 @@ public class ItemServiceImplJpa implements ItemService {
                 itemWithBookings.setComments(commentTexts);
             });
 
+            itemList.forEach(itemWithBookingsAndComments -> {
+                List<String> commentTexts = commentsMap.getOrDefault(itemWithBookingsAndComments.getItem(), List.of());
+
+                itemWithBookingsAndComments.setComments(commentTexts);
+            });
+            return itemList;
+        } else {
+            throw new NotFoundException("Booking с items данного владельца id=" + userId + " не найдены");
         }
-
-        Map<Item, List<String>> commentsMap = commentsByItemsSortedByDate.stream()
-                .collect(Collectors.groupingBy(Comment::getItem,
-                        Collectors.mapping(Comment::getText, Collectors.toList())));
-
-        List<ItemWithBookingsAndComments> itemList = itemsByOwnerId.stream()
-                .map(item -> {
-                    ItemWithBookingsAndComments itemWithBookings = new ItemWithBookingsAndComments();
-                    itemWithBookings.setItem(item);
-                    return itemWithBookings;
-                })
-                .toList();
-
-        itemList.forEach(itemWithBookingsAndComments -> {
-            List<String> commentTexts = commentsMap.getOrDefault(itemWithBookingsAndComments.getItem(), List.of());
-
-            itemWithBookingsAndComments.setComments(commentTexts);
-        });
-
-        return itemList;
     }
 
     public List<Item> findItemsByItemRequestRequestorId(Long requestorId) {
