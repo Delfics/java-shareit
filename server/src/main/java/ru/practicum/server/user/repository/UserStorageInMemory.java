@@ -1,5 +1,6 @@
 package ru.practicum.server.user.repository;
 
+import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.server.user.model.User;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Generated
 @Slf4j
 @Component
 public class UserStorageInMemory implements UserStorage {

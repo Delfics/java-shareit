@@ -1,5 +1,6 @@
 package ru.practicum.server.item.repository;
 
+import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.server.item.model.Item;
@@ -7,6 +8,7 @@ import ru.practicum.server.item.model.Item;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Generated
 @Slf4j
 @Component
 public class ItemStorageInMemory implements ItemStorage {

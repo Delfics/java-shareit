@@ -50,9 +50,4 @@ public class UserClient extends BaseClient {
     public ResponseEntity<Object> delete(Long userId) {
         return delete(Utility.SLASH + userId, userId);
     }
-
-    public ResponseEntity<Object> existsEmail(String email) {
-        Map<String, Object> param = Map.of("email", email);
-        return existsEmail("/exists-email?email={email}", param);
-    }
 }

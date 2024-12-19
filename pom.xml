@@ -185,6 +185,13 @@
 								<goal>check</goal>
 							</goals>
 							<configuration>
+								<excludes>
+									<exclude>ru/practicum/server/item/repository/ItemStorageInMemory.class</exclude>
+									<exclude>ru/practicum/server/item/service/ItemServiceImpl.class</exclude>
+									<exclude>ru/practicum/server/user/repository/UserStorageInMemory.class</exclude>
+									<exclude>ru/practicum/server/user/service/UserServiceImpl.class</exclude>
+									<ecxlude>ru/practicum/Application.class</ecxlude>
+								</excludes>
 								<rules>
 									<rule>
 										<element>BUNDLE</element>

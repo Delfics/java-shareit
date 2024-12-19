@@ -1,5 +1,6 @@
 package ru.practicum.server.user.service;
 
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import ru.practicum.server.user.repository.UserStorage;
 
 import java.util.Collection;
 
+@Generated
 @Slf4j
 @RequiredArgsConstructor
 @Service

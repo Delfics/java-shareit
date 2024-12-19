@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.api.dto.BookingDto;
 import ru.practicum.api.dto.ItemDto;
 import ru.practicum.api.dto.UserDto;
+import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.item.model.Item;
