@@ -1,7 +1,6 @@
 package ru.practicum.gateway.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

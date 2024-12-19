@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.service.BookingServiceImpl;
 import ru.practicum.server.exception.BadRequestException;
@@ -14,8 +13,6 @@ import ru.practicum.server.exception.ValidationException;
 import ru.practicum.server.item.model.Comment;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.model.ItemWithBookingsAndComments;
-import ru.practicum.server.item.repository.ItemStorageJpa;
-import ru.practicum.server.item.service.ItemServiceImplJpa;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserServiceImplJpa;
 
