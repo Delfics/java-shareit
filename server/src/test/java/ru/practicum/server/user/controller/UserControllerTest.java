@@ -33,10 +33,10 @@ import static org.hamcrest.Matchers.is;
 public class UserControllerTest {
     @InjectMocks
     private UserController userController;
-    private MockMvc mockMvc; ;
+    private MockMvc mockMvc;
     private final UserService userService = Mockito.mock(UserServiceImplJpa.class);
     @Autowired
-    private  ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     private UserDto userDto;
     private User createdUser;
 
@@ -57,8 +57,8 @@ public class UserControllerTest {
         when(userService.create(any(User.class))).thenReturn(createdUser);
 
         mockMvc.perform(post("/users")
-                .content(objectMapper.writeValueAsString(this.userDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(this.userDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(this.userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(this.userDto.getName())))
@@ -141,8 +141,8 @@ public class UserControllerTest {
         when(userService.patch(patchedUser, patchedUser.getId())).thenReturn(patchedUser);
 
         mockMvc.perform(patch("/users/{userId}", patchedUser.getId())
-                .content(objectMapper.writeValueAsString(patchedUserDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(patchedUserDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(patchedUserDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(patchedUserDto.getName())))
@@ -153,11 +153,11 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteUser() throws Exception {
-       doNothing().when(userService).deleteById(createdUser.getId());
+        doNothing().when(userService).deleteById(createdUser.getId());
 
-       mockMvc.perform(delete("/users/{id}", createdUser.getId()))
-               .andExpect(status().isOk());
+        mockMvc.perform(delete("/users/{id}", createdUser.getId()))
+                .andExpect(status().isOk());
 
-       verify(userService, times(1)).deleteById(createdUser.getId());
+        verify(userService, times(1)).deleteById(createdUser.getId());
     }
 }

@@ -84,7 +84,7 @@ public class ItemServiceImplJpaTest {
     }
 
     @Test
-    public void testCreateItemValidationExceptionIfNameOrDescriptionAreEmptyAndAvailableIsNull(){
+    public void testCreateItemValidationExceptionIfNameOrDescriptionAreEmptyAndAvailableIsNull() {
         item.setName("");
 
         assertThrows(ValidationException.class, () -> itemServiceImplJpa.createItem(item, user.getId()),
@@ -147,7 +147,7 @@ public class ItemServiceImplJpaTest {
 
         userServiceImplJpa.create(fakeUser);
 
-        assertThrows(NotFoundException.class, () ->itemServiceImplJpa.patch(item.getId(), item, fakeUser.getId()));
+        assertThrows(NotFoundException.class, () -> itemServiceImplJpa.patch(item.getId(), item, fakeUser.getId()));
     }
 
     @Test
