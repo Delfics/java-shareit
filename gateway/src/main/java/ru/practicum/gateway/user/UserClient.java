@@ -11,8 +11,6 @@ import ru.practicum.api.dto.UserDto;
 import ru.practicum.gateway.client.BaseClient;
 import ru.practicum.gateway.utils.Utility;
 
-import java.util.Map;
-
 @Service
 public class UserClient extends BaseClient {
     private static final String API_PREFIX = "/users";

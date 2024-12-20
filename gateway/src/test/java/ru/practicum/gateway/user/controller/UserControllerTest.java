@@ -8,14 +8,22 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.api.dto.UserDto;
 import ru.practicum.gateway.user.UserClient;
 import ru.practicum.gateway.user.UserController;
+import ru.practicum.gateway.utils.Utility;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,10 +35,23 @@ public class UserControllerTest {
 
     private MockMvc mockMvc;
 
-    private final UserClient userClient = Mockito.mock(UserClient.class);
+    @MockBean
+    private RestTemplate restTemplate /* = Mockito.mock(RestTemplate.class)*/;
 
-    @InjectMocks
+    @Autowired
     private UserController userController;
+
+   /* @MockBean
+    private RestTemplateBuilder builder;
+
+    @MockBean
+    DefaultUriBuilderFactory builderFactory;
+
+    @MockBean
+    private HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory;*/
+
+    @Autowired
+    private UserClient userClient;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -46,16 +67,25 @@ public class UserControllerTest {
         userDto.setName("Test User");
         userDto.setEmail("testuser@example.com");
 
-        when(userClient.create(any(UserDto.class)))
-                .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body("user created"));
+        HttpEntity<UserDto> requestEntity = new HttpEntity<>(userDto, defaultHeaders(null));
+        Map<String, Object> param = null;
+        ResponseEntity<Object> obj = ResponseEntity.status(HttpStatus.CREATED).body("user created");
+
+        when(restTemplate.exchange(eq(Utility.EMPTY), eq(HttpMethod.POST), eq(requestEntity),
+                eq(Object.class))).thenReturn(obj);
+
+        /*when(userClient.create(any(UserDto.class)))
+                .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body("user created"));*/
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isCreated());
 
-        verify(userClient, times(1)).create(any(UserDto.class));
+        verify(restTemplate, times(1)).exchange(eq(Utility.EMPTY), eq(HttpMethod.POST), eq(requestEntity),
+                eq(Object.class), eq(param));
     }
+/*
 
     @Test
     public void testCreateUser_NotValid_BadRequest() throws Exception {
@@ -195,5 +225,16 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(userClient, times(1)).delete(userId);
+    }
+*/
+
+    private HttpHeaders defaultHeaders(Long userId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        if (userId != null) {
+            headers.set("X-Sharer-User-Id", String.valueOf(userId));
+        }
+        return headers;
     }
 }

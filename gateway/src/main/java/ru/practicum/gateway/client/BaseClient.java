@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 public class BaseClient {
     protected final RestTemplate rest;
@@ -90,20 +89,6 @@ public class BaseClient {
 
     protected ResponseEntity<Object> findAllItemRequestsWithItems(String path, long userId) {
         return makeAndSendRequest(HttpMethod.GET, path, userId, null, null);
-    }
-
-    protected ResponseEntity<Object> existsEmail(String path, Map<String, Object> parameters) {
-        return makeAndSendRequest(HttpMethod.GET, path, null, parameters, null);
-    }
-
-    private String buildUrlWithParams(String path, Map<String, Object> parameters) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path);
-        if (parameters != null) {
-            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                builder.queryParam(entry.getKey(), entry.getValue());
-            }
-        }
-        return builder.toUriString();
     }
 
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, Long userId, @Nullable Map<String, Object> parameters, @Nullable T body) {
