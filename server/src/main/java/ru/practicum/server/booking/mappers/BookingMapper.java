@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.api.dto.BookingDto;
 import ru.practicum.api.dto.ItemDto;
 import ru.practicum.api.dto.UserDto;
-import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.item.model.Item;
@@ -20,13 +19,16 @@ public class BookingMapper {
         booking.setEnd(bookingDto.getEnd());
         if (bookingDto.getItem() != null) {
             booking.setItem(ItemMapper.toItem(bookingDto.getItem()));
-        } else if (bookingDto.getItemId() != null) {
+        }
+        if (bookingDto.getItemId() != null && bookingDto.getItem() == null) {
             Item item = new Item();
             item.setId(bookingDto.getItemId());
             booking.setItem(item);
-        } else if (bookingDto.getBooker() != null) {
+        }
+        if (bookingDto.getBooker() != null) {
             booking.setBooker(UserMapper.toUser(bookingDto.getBooker()));
-        } else if (bookingDto.getStatus() != null) {
+        }
+        if (bookingDto.getStatus() != null) {
             booking.setStatus(bookingDto.getStatus());
         }
         return booking;

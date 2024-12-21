@@ -40,20 +40,8 @@ public class ItemClient extends BaseClient {
         return get(Utility.EMPTY, userId);
     }
 
-    public ResponseEntity<Object> getById(Long userId) {
-        return get(Utility.SLASH + userId, userId);
-    }
-
-    public ResponseEntity<Object> update(Long userId, ItemDto itemDto) {
-        return put(Utility.SLASH + userId, userId, itemDto);
-    }
-
     public ResponseEntity<Object> patchItem(Long itemId, ItemDto itemDto, Long userId) {
         return patch(Utility.SLASH + itemId, userId, itemDto);
-    }
-
-    public ResponseEntity<Object> delete(Long userId) {
-        return delete(Utility.SLASH + userId, userId);
     }
 
     public ResponseEntity<Object> searchItems(String text) {

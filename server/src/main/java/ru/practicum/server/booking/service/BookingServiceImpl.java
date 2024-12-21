@@ -133,28 +133,6 @@ public class BookingServiceImpl {
         return filteredBookings;
     }
 
-    public BookingDto addItemIntoBookingDto(BookingDto bookingDto) {
-        log.debug("Добавил item в bookingDto");
-        Item byId = itemService.getById(bookingDto.getItemId());
-        bookingDto.setItem(ItemMapper.toItemDto(byId));
-        return bookingDto;
-    }
-
-    public BookingDto addBookerToBookingDto(BookingDto bookingDto, Long userId) {
-        log.debug("Добавил booker в bookingDto");
-        User byId = userService.getById(userId);
-        bookingDto.setBooker(UserMapper.toUserDto(byId));
-        return bookingDto;
-    }
-
-    public Boolean existsBookingByUserIdAndItemId(Long userId, Long itemId) {
-        return bookingStorage.existsBookingByUserIdAndItemId(userId, itemId);
-    }
-
-    public List<Booking> findAllBookingByItemList(List<Item> items) {
-        return bookingStorage.findAllBookingByItemList(items);
-    }
-
     public Booking findBookingByBookerIdAndItemId(Long bookerId, Long itemId) {
         return bookingStorage.findBookingByBookerIdAndItemId(bookerId, itemId);
     }

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -125,13 +126,13 @@ public class ItemControllerTest {
         when(itemServiceImplJpa.addItemToCommentDto(any(CommentDto.class), anyLong())).thenReturn(commentDto);
 
         mockMvc.perform(post("/items/{itemId}/comment", createdItem.getId())
-                        .content(objectMapper.writeValueAsString(createdCommentDto))
+                        .content(objectMapper.writeValueAsString(commentDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpProperties.xSharerUserId, commentator.getId()))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(createdCommentDto.getId()), Long.class))
-                .andExpect(jsonPath("$.authorName", is(createdCommentDto.getAuthorName())))
-                .andExpect(jsonPath("$.text", is(createdCommentDto.getText())))
+                .andExpect(jsonPath("$.id", is(commentDto.getId()), Long.class))
+                .andExpect(jsonPath("$.text", is(commentDto.getText())))
+                .andExpect(jsonPath("$.authorName", is(commentDto.getAuthor().getName())))
                 .andExpect(jsonPath("$.created", is(created)));
 
         verify(itemServiceImplJpa, times(1)).createComment(any(Comment.class), anyLong(), anyLong());

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.api.dto.CommentDto;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.service.BookingServiceImpl;
 import ru.practicum.server.exception.BadRequestException;
@@ -339,5 +340,40 @@ public class ItemServiceImplJpaTest {
                 "Текст комментария соответсвует - Another comment, а так же сортировка от нового к старому");
         assertEquals(comments.get(1), comment.getText(), "Текст комментария соответсвует - Test comment text");
         assertEquals(item.getName(), gotItem.getName(), "Полученный Name Item соответсвует созданному");
+    }
+
+    @Test
+    public void testAddItemToCommentDto() {
+        itemServiceImplJpa.createItem(item, user.getId());
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setItem(null);
+        commentDto.setId(1L);
+        commentDto.setText("random");
+        commentDto.setCreated(LocalDateTime.now());
+
+        commentDto = itemServiceImplJpa.addItemToCommentDto(commentDto, item.getId());
+
+        assertNotNull(commentDto.getItem());
+    }
+
+    @Test
+    public void testAddAuthorToCommentDto() {
+        User newUser = new User();
+        newUser.setId(20L);
+        newUser.setName("Random");
+        newUser.setEmail("random@example.com");
+
+        userServiceImplJpa.create(newUser);
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setItem(null);
+        commentDto.setId(1L);
+        commentDto.setText("random");
+        commentDto.setCreated(LocalDateTime.now());
+
+        commentDto = itemServiceImplJpa.addAuthorToCommentDto(commentDto, newUser.getId());
+
+        assertNotNull(commentDto.getAuthor());
     }
 }

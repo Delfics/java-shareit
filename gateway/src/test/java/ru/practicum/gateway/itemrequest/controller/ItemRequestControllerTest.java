@@ -4,32 +4,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 import ru.practicum.api.dto.ItemRequestDto;
-import ru.practicum.gateway.itemrequest.ItemRequestClient;
+import ru.practicum.gateway.Application;
+import ru.practicum.gateway.config.TestConfiguration;
 import ru.practicum.gateway.itemrequest.ItemRequestController;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@SpringBootTest(classes = {Application.class, TestConfiguration.class})
 public class ItemRequestControllerTest {
 
-    private final ItemRequestClient itemRequestClient = mock(ItemRequestClient.class);
-
-    @InjectMocks
+    @Autowired
     private ItemRequestController itemRequestController;
 
     private MockMvc mockMvc;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -42,13 +47,12 @@ public class ItemRequestControllerTest {
     @Test
     void testFindAllItemRequestsWithItemsForEach() throws Exception {
         Long userId = 1L;
-        when(itemRequestClient.findAllItemRequestsWithItemsForEach(userId)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
         mockMvc.perform(get("/requests")
                         .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isOk());
-
-        verify(itemRequestClient).findAllItemRequestsWithItemsForEach(userId);
     }
 
     @Test
@@ -56,47 +60,42 @@ public class ItemRequestControllerTest {
         Long userId = 1L;
         Long requestId = 2L;
 
-        when(itemRequestClient.findItemRequestByIdWithItemsForEach(userId, requestId))
-                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
         mockMvc.perform(get("/requests/{requestId}", requestId)
                         .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isOk());
 
-        verify(itemRequestClient).findItemRequestByIdWithItemsForEach(userId, requestId);
     }
 
     @Test
     void testGetAllOtherItemRequests() throws Exception {
         Long userId = 1L;
 
-        when(itemRequestClient.getAllOtherItemRequests(userId)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
         mockMvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isOk());
-
-        verify(itemRequestClient).getAllOtherItemRequests(userId);
     }
 
     @Test
     void testCreateItemRequest() throws Exception {
         Long userId = 1L;
-        ItemRequestDto itemRequestDto = new ItemRequestDto();  // Создаем объект ItemRequestDto
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
         itemRequestDto.setDescription("Test request");
 
-        // Настроим mock поведение
-        when(itemRequestClient.createItemRequest(any(), eq(userId)))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(itemRequestDto));
 
         mockMvc.perform(post("/requests")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(itemRequestDto))  // Преобразуем DTO в JSON
-                        .header("X-Sharer-User-Id", userId))  // Заголовок с userId
-                .andExpect(status().isCreated());  // Проверяем, что статус 201 CREATED
-
-        // Проверим, что метод был вызван
-        verify(itemRequestClient).createItemRequest(any(), eq(userId));
+                        .content(objectMapper.writeValueAsString(itemRequestDto))
+                        .header("X-Sharer-User-Id", userId))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.description", is(itemRequestDto.getDescription())));
     }
 }
 

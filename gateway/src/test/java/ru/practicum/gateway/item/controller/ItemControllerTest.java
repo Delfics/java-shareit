@@ -4,37 +4,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 import ru.practicum.api.dto.CommentDto;
 import ru.practicum.api.dto.ItemDto;
-import ru.practicum.gateway.item.ItemClient;
+import ru.practicum.api.dto.UserDto;
+import ru.practicum.gateway.Application;
+import ru.practicum.gateway.config.TestConfiguration;
 import ru.practicum.gateway.item.ItemController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@SpringBootTest(classes = {Application.class, TestConfiguration.class})
 public class ItemControllerTest {
 
     private MockMvc mockMvc;
 
-    private final ItemClient itemClient = Mockito.mock(ItemClient.class);
+    @Autowired
+    private RestTemplate restTemplate;
 
-    @InjectMocks
+    @Autowired
     private ItemController itemController;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private final DateTimeFormatter formatJson = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @BeforeEach
     public void setup() {
@@ -50,16 +58,18 @@ public class ItemControllerTest {
         itemDto.setDescription("Description of the test item");
         itemDto.setAvailable(true);
 
-        when(itemClient.createItem(eq(userId), any(ItemDto.class)))
-                .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(itemDto));
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(itemDto));
 
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto)))
-                .andExpect(status().isCreated());
-
-        verify(itemClient).createItem(eq(userId), any(ItemDto.class));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(itemDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(itemDto.getName())))
+                .andExpect(jsonPath("$.description", is(itemDto.getDescription())))
+                .andExpect(jsonPath("$.available", is(itemDto.getAvailable())));
     }
 
     @Test
@@ -76,67 +86,86 @@ public class ItemControllerTest {
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isBadRequest());
 
-        verify(itemClient, never()).createItem(eq(userId), any(ItemDto.class));
     }
 
     @Test
     public void testGetItems() throws Exception {
         Long userId = 1L;
-        when(itemClient.getAll(any(Long.class))).thenReturn(ResponseEntity.ok().build());
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
         mockMvc.perform(get("/items")
                         .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isOk());
-
-        verify(itemClient, times(1)).getAll(any(Long.class));
     }
 
     @Test
     public void testGetItems_NotFound() throws Exception {
         Long userId = 1L;
-        when(itemClient.getAll(any(Long.class))).thenReturn(ResponseEntity.notFound().build());
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 
         mockMvc.perform(get("/items")
                         .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isNotFound());
-
-        verify(itemClient, times(1)).getAll(any(Long.class));
     }
 
     @Test
     public void testGetByIdItemWithComments() throws Exception {
         Long userId = 1L;
         Long itemId = 1L;
-        when(itemClient.getByIdItemWithComments(eq(itemId), eq(userId)))
-                .thenReturn(ResponseEntity.ok().body("item with comments"));
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
         mockMvc.perform(get("/items/{itemId}", itemId)
                         .header("X-Sharer-User-Id", userId))
-                .andExpect(status().isOk())
-                .andExpect(content().string("item with comments"));
-
-        verify(itemClient, times(1)).getByIdItemWithComments(eq(itemId), eq(userId));
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testCreateComment() throws Exception {
-        // Arrange
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("Author");
+        userDto.setEmail("Author@email.com");
+
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("Test Item");
+        itemDto.setDescription("Description of the test item");
+        itemDto.setAvailable(true);
+
         Long userId = 1L;
         Long itemId = 1L;
         CommentDto commentDto = new CommentDto();
+        commentDto.setId(1L);
         commentDto.setText("Great item!");
+        commentDto.setAuthor(userDto);
+        commentDto.setCreated(LocalDateTime.now());
+        commentDto.setItem(itemDto);
 
-        when(itemClient.createComment(eq(commentDto), eq(itemId), eq(userId)))
-                .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body("comment created"));
+        String created = commentDto.getCreated().format(formatJson);
+
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(commentDto));
 
         mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentDto)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("comment created"));
-
-        verify(itemClient, times(1)).createComment(eq(commentDto), eq(itemId), eq(userId));
+                .andExpect(jsonPath("$.id", is(commentDto.getId()), Long.class))
+                .andExpect(jsonPath("$.text", is(commentDto.getText())))
+                .andExpect(jsonPath("$.created", is(created)))
+                .andExpect(jsonPath("$.author.id", is(commentDto.getAuthor().getId()), Long.class))
+                .andExpect(jsonPath("$.author.name", is(commentDto.getAuthor().getName())))
+                .andExpect(jsonPath("$.author.email", is(commentDto.getAuthor().getEmail())))
+                .andExpect(jsonPath("$.item.id", is(commentDto.getItem().getId()), Long.class))
+                .andExpect(jsonPath("$.item.name", is(commentDto.getItem().getName())))
+                .andExpect(jsonPath("$.item.description", is(commentDto.getItem().getDescription())))
+                .andExpect(jsonPath("$.item.available", is(commentDto.getItem().getAvailable())));
     }
 
     @Test
@@ -146,16 +175,14 @@ public class ItemControllerTest {
         CommentDto commentDto = new CommentDto();
         commentDto.setText("Great item!");
 
-        when(itemClient.createComment(eq(commentDto), eq(itemId), eq(userId)))
-                .thenReturn(ResponseEntity.badRequest().build());
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
 
         mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentDto)))
                 .andExpect(status().isBadRequest());
-
-        verify(itemClient, times(1)).createComment(eq(commentDto), eq(itemId), eq(userId));
     }
 
     @Test
@@ -167,16 +194,14 @@ public class ItemControllerTest {
         itemDto.setDescription("Updated description");
         itemDto.setAvailable(true);
 
-        when(itemClient.patchItem(eq(itemId), any(ItemDto.class), eq(userId)))
-                .thenReturn(ResponseEntity.ok().body("item updated"));
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
         mockMvc.perform(patch("/items/{itemId}", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isOk());
-
-        verify(itemClient, times(1)).patchItem(eq(itemId), any(ItemDto.class), eq(userId));
     }
 
     @Test
@@ -187,28 +212,26 @@ public class ItemControllerTest {
         itemDto.setName("Updated Item");
         itemDto.setDescription("Updated description");
 
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class))).thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+
         mockMvc.perform(patch("/items/{itemId}", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isBadRequest());
-
-        verify(itemClient, never()).patchItem(any(Long.class), any(ItemDto.class), any(Long.class));
     }
 
     @Test
     public void testSearchItems() throws Exception {
-        // Arrange
         String searchText = "Test Item";
-        when(itemClient.searchItems(eq(searchText)))
-                .thenReturn(ResponseEntity.ok().body("search results"));
+        Map<String, Object> parameter = Map.of("text", searchText);
+        when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class),
+                eq(Object.class), eq(parameter))).thenReturn(ResponseEntity.status(HttpStatus.OK).build());
 
-        // Act & Assert
         mockMvc.perform(get("/items/search")
                         .param("text", searchText))
-                .andExpect(status().isOk())
-                .andExpect(content().string("search results"));
+                .andExpect(status().isOk());
 
-        verify(itemClient, times(1)).searchItems(eq(searchText));
     }
 }

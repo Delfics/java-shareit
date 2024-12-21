@@ -39,7 +39,7 @@ public class CommentMapperTest {
         assertThat(comment.getText()).isEqualTo(dto.getText());
         assertThat(comment.getUser()).isEqualTo(author);
         assertThat(comment.getItem()).isEqualTo(item);
-        assertThat(comment.getCreated()).isNotNull();  // Проверяем, что время создания не null
+        assertThat(comment.getCreated()).isNotNull();
     }
 
     @Test

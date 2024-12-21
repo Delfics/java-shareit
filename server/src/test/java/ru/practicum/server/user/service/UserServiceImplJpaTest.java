@@ -12,6 +12,7 @@ import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.repository.UserStorageJpa;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,6 +118,14 @@ public class UserServiceImplJpaTest {
     }
 
     @Test
+    public void testDeleteUser() {
+        userService.create(user);
+        userService.deleteById(user.getId());
+
+        assertEquals(Optional.empty(), userStorageJpa.findById(user.getId()), "Пользователь удалён");
+    }
+
+    @Test
     public void testPatchUserNameNullValidationException() {
         user.setName(null);
         userStorageJpa.save(user);
@@ -125,6 +134,33 @@ public class UserServiceImplJpaTest {
         newUser.setId(user.getId());
         newUser.setName(null);
         newUser.setEmail("User2@example.com");
+
+        assertThrows(ValidationException.class, () -> userService.patch(newUser, user.getId()), "Throw ValidationException");
+    }
+
+    @Test
+    public void testPatchUserEmailExistConflictException() {
+        user.setName("newName");
+        userStorageJpa.save(user);
+
+        User newUser = new User();
+        newUser.setId(user.getId());
+        newUser.setName(null);
+        newUser.setEmail("testuser@example.com");
+
+        assertThrows(ConflictException.class, () -> userService.patch(newUser, user.getId()), "Throw ValidationException");
+    }
+
+    @Test
+    public void testPatchUserEmailNullValidationException() {
+        user.setName("name");
+        user.setEmail(null);
+        userStorageJpa.save(user);
+
+        User newUser = new User();
+        newUser.setId(user.getId());
+        newUser.setName("another");
+        newUser.setEmail(null);
 
         assertThrows(ValidationException.class, () -> userService.patch(newUser, user.getId()), "Throw ValidationException");
     }
@@ -145,7 +181,7 @@ public class UserServiceImplJpaTest {
     }
 
     @Test
-    public void testDeleteUser() {
+    public void testDeleteUserThrowNotFoundException() {
         user.setEmail("anotheruser@example.com");
         userService.create(user);
 

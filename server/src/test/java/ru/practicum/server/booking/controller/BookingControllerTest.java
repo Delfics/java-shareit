@@ -80,6 +80,7 @@ public class BookingControllerTest {
         booking.setEnd(LocalDateTime.now().plusDays(1));
         booking.setStatus(Status.WAITING);
 
+
         bookingDto = BookingMapper.toBookingDto(booking);
         bookingDto.setItemId(item.getId());
     }
