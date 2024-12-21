@@ -1,7 +1,6 @@
 package ru.practicum.server.itemrequest.mappers;
 
 import lombok.experimental.UtilityClass;
-
 import ru.practicum.api.dto.ItemDto;
 import ru.practicum.api.dto.ItemRequestDto;
 import ru.practicum.api.dto.ItemRequestWithItemsDto;
@@ -9,7 +8,6 @@ import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.itemrequest.model.ItemRequest;
 import ru.practicum.server.itemrequest.model.ItemRequestWithItems;
 import ru.practicum.server.user.mappers.UserMapper;
-
 
 import java.util.List;
 
@@ -51,9 +49,4 @@ public class ItemRequestMapper {
         itemRequestWithItemDto.setItems(items);
         return itemRequestWithItemDto;
     }
-
-    public List<ItemRequestWithItemsDto> toListItemRequestWithItemsDto(List<ItemRequest> itemRequests) {
-        return null;
-    }
-
 }

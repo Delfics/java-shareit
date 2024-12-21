@@ -16,20 +16,6 @@ public interface ItemRequestStorageJpa extends JpaRepository<ItemRequest, Long> 
             "ORDER BY itreq.created DESC")
     List<ItemRequest> findAllItemRequestsByUserId(Long userId);
 
-    /*@Query("SELECT new ru.practicum.shareit.itemrequest.model.ItemRequestWithListItems(itreq, " +
-            "   (SELECT i FROM Item i WHERE i.itemRequest = itreq)) " +
-            "FROM ItemRequest itreq " +
-            "WHERE itreq.requestor.id = ?1 " +
-            "ORDER BY itreq.created DESC")
-    List<ItemRequestWithListItems> findAllItemRequestsWithItemsForEach(Long userId);*/
-
-    /*@Query("SELECT new ru.practicum.shareit.itemrequest.model.ItemRequestWithItems(itreq, " +
-            "(SELECT i FROM Item i WHERE i.itemRequest.id = itreq.id)) " +
-            "FROM ItemRequest itreq " +
-            "WHERE itreq.requestor.id = ?1 " +
-            "ORDER BY itreq.created DESC")
-    List<ItemRequestWithItems> findAllItemRequestsWithItemsForEach(Long userId);*/
-
     @Query("SELECT itreq, item " +
             "FROM ItemRequest as itreq " +
             "JOIN Item as item on item.requestId = itreq.id " +

@@ -42,7 +42,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ItemRequestWithItemsDto findItemRequestByIdWithItemsForEach(@RequestHeader(HttpProperties.xSharerUserId) Long userId,
-                                                           @PathVariable Long requestId) {
+                                                                       @PathVariable Long requestId) {
         log.info("Запрос Get - findItemRequestByIdWithItemsForEach. Входные параметры requestId {}", requestId);
         ItemRequestWithItems itemRequestByIdWithItemsForEach = itemRequestService.findItemRequestByIdWithAllItems(requestId);
         return ItemRequestMapper.toItemRequestWithItemsDto(itemRequestByIdWithItemsForEach);

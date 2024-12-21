@@ -6,7 +6,7 @@ import ru.practicum.server.user.model.User;
 import java.util.Collection;
 
 @Service
-public interface UserService  {
+public interface UserService {
     Collection<User> getAll();
 
     User getById(Long id);

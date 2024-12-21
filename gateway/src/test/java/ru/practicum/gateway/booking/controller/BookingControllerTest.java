@@ -15,10 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.api.dto.BookingDto;
+import ru.practicum.api.dto.State;
 import ru.practicum.gateway.Application;
 import ru.practicum.gateway.booking.BookingController;
 import ru.practicum.gateway.config.TestConfiguration;
-import ru.practicum.api.dto.State;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,7 +27,8 @@ import java.util.Map;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = {Application.class, TestConfiguration.class})
 @ExtendWith(MockitoExtension.class)

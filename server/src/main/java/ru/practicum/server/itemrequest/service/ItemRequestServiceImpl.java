@@ -10,7 +10,6 @@ import ru.practicum.server.itemrequest.repository.ItemRequestStorageJpa;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,8 +35,8 @@ public class ItemRequestServiceImpl {
         List<ItemRequest> userItemRequests = itemRequestStorage.findAllItemRequestsByUserId(userId);
 
         List<ItemRequest> otherItemRequests = allItemRequests.stream()
-                .filter(itemRequest -> !userItemRequests.contains(itemRequest)) // Исключаем собственные запросы
-                .sorted(Comparator.comparing(ItemRequest::getCreated).reversed()) // Сортируем от новых к старым
+                .filter(itemRequest -> !userItemRequests.contains(itemRequest))
+                .sorted(Comparator.comparing(ItemRequest::getCreated).reversed())
                 .toList();
 
         return otherItemRequests;

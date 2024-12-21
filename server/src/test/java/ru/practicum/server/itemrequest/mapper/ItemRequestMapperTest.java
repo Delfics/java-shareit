@@ -12,7 +12,6 @@ import ru.practicum.server.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,10 +89,5 @@ public class ItemRequestMapperTest {
         assertThat(dto.getItems()).isNotEmpty();
         assertThat(dto.getItems().get(0).getId()).isEqualTo(item.getId());
         assertThat(dto.getItems().get(0).getName()).isEqualTo(item.getName());
-    }
-
-    @Test
-    void testToListItemRequestWithItemsDto() {
-        assertThat(ItemRequestMapper.toListItemRequestWithItemsDto(Collections.emptyList())).isNull();
     }
 }

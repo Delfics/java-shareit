@@ -1,19 +1,18 @@
 package ru.practicum.server.booking.mapper;
 
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import ru.practicum.api.dto.BookingDto;
 import ru.practicum.api.dto.ItemDto;
-import ru.practicum.api.dto.UserDto;
 import ru.practicum.api.dto.Status;
+import ru.practicum.api.dto.UserDto;
 import ru.practicum.server.booking.mappers.BookingMapper;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.user.model.User;
 
 import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingMapperTest {
 

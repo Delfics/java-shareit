@@ -3,8 +3,6 @@ package ru.practicum.server.booking.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import ru.practicum.api.dto.BookingDto;
 import ru.practicum.api.dto.State;
 import ru.practicum.api.dto.Status;
 import ru.practicum.server.booking.model.Booking;
@@ -12,10 +10,8 @@ import ru.practicum.server.booking.repository.BookingStorageJpa;
 import ru.practicum.server.exception.BadRequestException;
 import ru.practicum.server.exception.ForbiddenException;
 import ru.practicum.server.exception.NotFoundException;
-import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.service.ItemService;
-import ru.practicum.server.user.mappers.UserMapper;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
 

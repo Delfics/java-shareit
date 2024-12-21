@@ -9,11 +9,11 @@ import ru.practicum.api.dto.CommentDto;
 import ru.practicum.api.dto.CommentDtoRequired;
 import ru.practicum.api.dto.ItemDto;
 import ru.practicum.api.dto.ItemWithBookingsAndCommentsDto;
+import ru.practicum.server.item.comment.mappers.CommentMapper;
+import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.model.ItemWithBookingsAndComments;
 import ru.practicum.server.item.service.ItemServiceImplJpa;
-import ru.practicum.server.item.comment.mappers.CommentMapper;
-import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.utils.HttpProperties;
 
 import java.util.Collection;

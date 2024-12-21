@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.dto.UserDto;
+import ru.practicum.server.user.mappers.UserMapper;
 import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.service.UserService;
-import ru.practicum.server.user.mappers.UserMapper;
 
 import java.util.Collection;
 
