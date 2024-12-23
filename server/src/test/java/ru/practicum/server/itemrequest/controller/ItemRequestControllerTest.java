@@ -20,7 +20,7 @@ import ru.practicum.server.itemrequest.model.ItemRequest;
 import ru.practicum.server.itemrequest.model.ItemRequestWithItems;
 import ru.practicum.server.itemrequest.service.ItemRequestServiceImpl;
 import ru.practicum.server.user.model.User;
-import ru.practicum.server.utils.HttpProperties;
+import ru.practicum.api.utils.HttpProperties;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

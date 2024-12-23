@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.dto.CommentDto;
 import ru.practicum.api.dto.ItemDto;
-import ru.practicum.gateway.utils.HttpProperties;
+import ru.practicum.api.utils.HttpProperties;
 
 @RestController
 @Slf4j

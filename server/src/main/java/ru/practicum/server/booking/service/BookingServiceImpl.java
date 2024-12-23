@@ -106,7 +106,7 @@ public class BookingServiceImpl {
 
     private List<Booking> filterBookings(State state, List<Booking> allBookings) {
         LocalDateTime timeNow = LocalDateTime.now();
-        List<Booking> filteredBookings = allBookings.stream()
+        return allBookings.stream()
                 .filter(booking -> {
                     switch (state) {
                         case CURRENT:
@@ -126,7 +126,6 @@ public class BookingServiceImpl {
                 })
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .collect(Collectors.toList());
-        return filteredBookings;
     }
 
     public Booking findBookingByBookerIdAndItemId(Long bookerId, Long itemId) {

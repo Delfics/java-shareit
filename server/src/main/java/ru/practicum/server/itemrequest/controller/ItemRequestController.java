@@ -1,17 +1,16 @@
 package ru.practicum.server.itemrequest.controller;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.dto.ItemRequestDto;
 import ru.practicum.api.dto.ItemRequestWithItemsDto;
+import ru.practicum.api.utils.HttpProperties;
 import ru.practicum.server.itemrequest.mappers.ItemRequestMapper;
 import ru.practicum.server.itemrequest.model.ItemRequest;
 import ru.practicum.server.itemrequest.model.ItemRequestWithItems;
 import ru.practicum.server.itemrequest.service.ItemRequestServiceImpl;
-import ru.practicum.server.utils.HttpProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,19 +51,14 @@ public class ItemRequestController {
     public List<ItemRequestDto> getAllOtherItemRequests(@RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("Запрос Get - getAllOtherItemRequests. Входные параметры {}", userId);
         List<ItemRequest> allOtherItemRequests = itemRequestService.findAllOtherItemRequests(userId);
-        List<ItemRequestDto> result = allOtherItemRequests.stream()
+        return allOtherItemRequests.stream()
                 .map(ItemRequestMapper::toItemRequestDto)
                 .toList();
-        /*for (ItemRequest itemRequest : allOtherItemRequests) {
-            ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
-            result.add(itemRequestDto);
-        }*/
-        return result;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemRequestDto createItemRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
+    public ItemRequestDto createItemRequest(@RequestBody ItemRequestDto itemRequestDto,
                                             @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("Запрос Post - createItemRequest. Входные параметры itemRequestDto - {} , userId {} ", itemRequestDto.toString(), userId);
         return ItemRequestMapper.toItemRequestDto(itemRequestService.createItemRequest(ItemRequestMapper.toItemRequest(itemRequestDto), userId));

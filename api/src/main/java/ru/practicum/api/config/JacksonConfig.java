@@ -1,4 +1,4 @@
-package ru.practicum.gateway.config;
+package ru.practicum.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

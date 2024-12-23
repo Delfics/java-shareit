@@ -24,7 +24,7 @@ import ru.practicum.server.item.model.ItemWithBookingsAndComments;
 import ru.practicum.server.item.service.ItemServiceImplJpa;
 import ru.practicum.server.user.mappers.UserMapper;
 import ru.practicum.server.user.model.User;
-import ru.practicum.server.utils.HttpProperties;
+import ru.practicum.api.utils.HttpProperties;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

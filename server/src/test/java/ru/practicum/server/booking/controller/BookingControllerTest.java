@@ -20,7 +20,7 @@ import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.service.BookingServiceImpl;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.user.model.User;
-import ru.practicum.server.utils.HttpProperties;
+import ru.practicum.api.utils.HttpProperties;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

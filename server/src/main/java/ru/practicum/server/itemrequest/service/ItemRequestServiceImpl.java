@@ -87,7 +87,6 @@ public class ItemRequestServiceImpl {
         User requestor = userService.getById(userId);
         itemRequest.setRequestor(requestor);
         itemRequest.setCreated(LocalDateTime.now());
-        ItemRequest created = itemRequestStorage.save(itemRequest);
-        return created;
+        return itemRequestStorage.save(itemRequest);
     }
 }

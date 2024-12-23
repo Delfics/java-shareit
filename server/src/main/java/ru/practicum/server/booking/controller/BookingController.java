@@ -1,16 +1,15 @@
 package ru.practicum.server.booking.controller;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.dto.BookingDto;
 import ru.practicum.api.dto.State;
+import ru.practicum.api.utils.HttpProperties;
 import ru.practicum.server.booking.mappers.BookingMapper;
 import ru.practicum.server.booking.model.Booking;
 import ru.practicum.server.booking.service.BookingServiceImpl;
-import ru.practicum.server.utils.HttpProperties;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto getBookingByBookingId(@PathVariable("bookingId") Long bookingId,
                                             @RequestHeader(HttpProperties.xSharerUserId) Long bookerId) {
-        log.info("Запрос Get - getBookingByBookingId. Входные параметры bookingId {}, bookerId - {}",
+        log.info("Запрос Get - BookingByBookingId. Входные параметры bookingId {}, bookerId - {}",
                 bookingId, bookerId);
         return BookingMapper.toBookingDto(bookingService.findBookingByBookingIdAndUserId(bookingId, bookerId));
 
@@ -37,7 +36,7 @@ public class BookingController {
     @GetMapping()
     public List<BookingDto> getAllBookingsByBookerId(@RequestParam(required = false, defaultValue = "ALL") State state,
                                                      @RequestHeader(HttpProperties.xSharerUserId) Long bookerId) {
-        log.info("Запрос Get - getAllBookingsByBookerId. Входные параметры bookerId - {}", bookerId);
+        log.info("Запрос Get - AllBookingsByBookerId. Входные параметры bookerId - {}", bookerId);
         List<Booking> allBookingsByBookerId = bookingService.findAllBookingsByBookerId(state, bookerId);
         return allBookingsByBookerId.stream()
                 .map(BookingMapper::toBookingDto)
@@ -48,7 +47,7 @@ public class BookingController {
     public List<BookingDto> findAllBookingsForAllItemsCurrentUser(
             @RequestParam(required = false, defaultValue = "ALL") State state,
             @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
-        log.info("Запрос Get - findAllBookingsForAllItemsCurrentUser. Входные параметры ownerId - {}", ownerId);
+        log.info("Запрос Get - BookingsForAllItemsCurrentUser. Входные параметры ownerId - {}", ownerId);
         List<Booking> allBookingsWithAllItemsByOwnerId = bookingService.findAllBookingsForAllItemsByOwnerId(state, ownerId);
         return allBookingsWithAllItemsByOwnerId.stream()
                 .map(BookingMapper::toBookingDto)
@@ -57,7 +56,7 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingDto create(@Valid @RequestBody BookingDto bookingDto,
+    public BookingDto create(@RequestBody BookingDto bookingDto,
                              @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("Запрос Post - create. Входные параметры bookingDto - {} , userId {} ",
                 bookingDto.toString(), userId);
@@ -67,7 +66,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public BookingDto patch(@PathVariable Long bookingId, @RequestParam Boolean approved,
                             @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
-        log.info("Запрос Patch - create. Входные параметры bookingId - {} , userId {} ",
+        log.info("Запрос Patch - patch. Входные параметры bookingId - {} , userId {} ",
                 bookingId, ownerId);
         return BookingMapper.toBookingDto(bookingService.patch(bookingId, approved, ownerId));
     }

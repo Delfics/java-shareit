@@ -1,6 +1,5 @@
 package ru.practicum.server.item.controller;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,12 +8,12 @@ import ru.practicum.api.dto.CommentDto;
 import ru.practicum.api.dto.CommentDtoRequired;
 import ru.practicum.api.dto.ItemDto;
 import ru.practicum.api.dto.ItemWithBookingsAndCommentsDto;
+import ru.practicum.api.utils.HttpProperties;
 import ru.practicum.server.item.comment.mappers.CommentMapper;
 import ru.practicum.server.item.mappers.ItemMapper;
 import ru.practicum.server.item.model.Item;
 import ru.practicum.server.item.model.ItemWithBookingsAndComments;
 import ru.practicum.server.item.service.ItemServiceImplJpa;
-import ru.practicum.server.utils.HttpProperties;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +31,7 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
+    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader(HttpProperties.xSharerUserId) Long userId) {
         log.info("Запрос Post - createItem. Входные параметры itemDto - {} , userId {} ", itemDto.toString(), userId);
         return ItemMapper.toItemDto(itemService.createItem(ItemMapper.toItem(itemDto), userId));
     }

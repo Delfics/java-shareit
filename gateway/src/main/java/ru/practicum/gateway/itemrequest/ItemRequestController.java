@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.dto.ItemRequestDto;
-import ru.practicum.gateway.utils.HttpProperties;
+import ru.practicum.api.utils.HttpProperties;
 
 
 @Slf4j

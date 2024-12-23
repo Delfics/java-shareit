@@ -1,6 +1,5 @@
 package ru.practicum.server.user.controller;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@RequestBody UserDto userDto) {
         log.info("Запрос Post - create. Входные параметры userDto {}", userDto.toString());
         User user = UserMapper.toUser(userDto);
         User createdUser = userService.create(user);

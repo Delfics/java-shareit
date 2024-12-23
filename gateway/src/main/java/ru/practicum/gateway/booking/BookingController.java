@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.api.dto.BookingDto;
 import ru.practicum.api.dto.State;
-import ru.practicum.gateway.utils.HttpProperties;
+import ru.practicum.api.utils.HttpProperties;
 
 
 @Controller
@@ -25,7 +25,7 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBookingByBookingId(@PathVariable("bookingId") Long bookingId,
                                                         @RequestHeader(HttpProperties.xSharerUserId) Long bookerId) {
-        log.info("Get - getBookingByBookingId. Входные параметры bookingId={}, bookerId={}",
+        log.info("Get - BookingByBookingId. Входные параметры bookingId={}, bookerId={}",
                 bookingId, bookerId);
         return bookingClient.getBookingByBookingId(bookingId, bookerId);
 
@@ -34,7 +34,7 @@ public class BookingController {
     @GetMapping()
     public ResponseEntity<Object> getAllBookingsByBookerId(@RequestParam(required = false, defaultValue = "ALL") State state,
                                                            @RequestHeader(HttpProperties.xSharerUserId) Long bookerId) {
-        log.info("Get - getAllBookingsByBookerId. Входные параметры bookerId={}", bookerId);
+        log.info("Get - AllBookingsByBookerId. Входные параметры bookerId={}", bookerId);
         return bookingClient.getAllBookingsByBookerId(state, bookerId);
     }
 
@@ -42,7 +42,7 @@ public class BookingController {
     public ResponseEntity<Object> findAllBookingsForAllItemsCurrentUser(
             @RequestParam(required = false, defaultValue = "ALL") State state,
             @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
-        log.info("Get - findAllBookingsForAllItemsCurrentUser. Входные параметры ownerId={}", ownerId);
+        log.info("Get - AllBookingsForAllItemsCurrentUser. Входные параметры ownerId={}", ownerId);
         return bookingClient.findAllBookingsForAllItemsCurrentUser(state, ownerId);
     }
 
@@ -58,7 +58,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> patch(@PathVariable Long bookingId, @RequestParam Boolean approved,
                                         @RequestHeader(HttpProperties.xSharerUserId) Long ownerId) {
-        log.info("Patch - patch. Входные параметры bookingId ={} , userId={} ",
+        log.info("Patch - patchBooking. Входные параметры bookingId ={} , userId={} ",
                 bookingId, ownerId);
         return bookingClient.patch(bookingId, approved, ownerId);
     }
